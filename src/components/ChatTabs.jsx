@@ -2,19 +2,19 @@
 import React, { useState } from 'react';
 
 // Icons
-import snd from '../assets/images/snd.svg';
-import sadEmoji from '../assets/images/sad-emoji.svg';
-import sadEmoji2 from '../assets/images/sad-emoji2.svg';
-import illEmoji from '../assets/images/ill-emoji.svg';
-import brainEmoji from '../assets/images/brain-emoji.svg';
-import dolarEmoji from '../assets/images/dolar-emoji.svg';
-import smilyEmoji2 from '../assets/images/smily-emoji2.svg';
-import blindEmoji from '../assets/images/blind-emoji.svg';
-import sadEmoji3 from '../assets/images/sad-emoji3.svg';
-import silenceEmoji from '../assets/images/silence-emoji.svg';
-import thumbupEmoji from '../assets/images/thumbup-emoji.svg';
-import gProof from '../assets/images/g-proof.svg';
-import cross from '../assets/images/cross.svg';
+const snd = '/images/snd.svg';
+const sadEmoji = '/images/sad-emoji.svg';
+const sadEmoji2 = '/images/sad-emoji2.svg';
+const illEmoji = '/images/ill-emoji.svg';
+const brainEmoji = '/images/brain-emoji.svg';
+const dolarEmoji = '/images/dolar-emoji.svg';
+const smilyEmoji2 = '/images/smily-emoji2.svg';
+const blindEmoji = '/images/blind-emoji.svg';
+const sadEmoji3 = '/images/sad-emoji3.svg';
+const silenceEmoji = '/images/silence-emoji.svg';
+const thumbupEmoji = '/images/thumbup-emoji.svg';
+const gProof = '/images/g-proof.svg';
+const cross = '/images/cross.svg';
 
 const ChatTabs = () => {
     const [activeTab, setActiveTab] = useState('chat');

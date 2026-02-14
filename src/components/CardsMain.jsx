@@ -1,10 +1,10 @@
 
 import React from 'react';
-import card1 from '../assets/images/card1.svg';
-import card2 from '../assets/images/card2.svg';
-import card3 from '../assets/images/card3.svg';
-import card4 from '../assets/images/card4.svg';
-import card5 from '../assets/images/card5.svg';
+const card1 = '/images/card1.svg';
+const card2 = '/images/card2.svg';
+const card3 = '/images/card3.svg';
+const card4 = '/images/card4.svg';
+const card5 = '/images/card5.svg';
 
 const CardsMain = () => {
     return (

@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import logo from '../assets/img/logo@2x.png';
-import cameraIcon from '../assets/images/camera.svg';
-import messageIcon from '../assets/images/message.svg';
+const logo = '/img/logo@2x.png';
+const cameraIcon = '/images/camera.svg';
+const messageIcon = '/images/message.svg';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);

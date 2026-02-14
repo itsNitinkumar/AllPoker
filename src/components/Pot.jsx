@@ -1,6 +1,6 @@
 
 import React from 'react';
-import potImgSrc from '../assets/img/chips/p-blinds.png';
+const potImgSrc = '/img/chips/p-blinds.png';
 
 const Pot = ({ id, imgId, layersId, targetId }) => {
     return (

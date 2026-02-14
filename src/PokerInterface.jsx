@@ -1,13 +1,4 @@
-
 import React, { useEffect, useState } from 'react';
-
-// CSS Imports
-import './assets/css/style.css';
-import './assets/css/responsive.css';
-import './assets/fonts/opensans/stylesheet.css';
-import './assets/fonts/glacial/stylesheet.css';
-import './assets/fonts/linearicons/stylesheet.css';
-import './assets/fonts/ionicons.min.css';
 
 // Components
 import Header from './components/Header';
@@ -22,19 +13,49 @@ import ActionsPanel from './components/ActionsPanel';
 import { AddFundsModal, TimeoutModal, ConfirmLeaveModal } from './components/Modals';
 
 // Images for Main Room
-import room1VideoImg from './assets/video/room1.webp';
-import table4 from './assets/video/table4.png';
-import glass from './assets/video/glass.png';
+const room1VideoImg = '/video/room1.webp';
+const table4 = '/video/table4.png';
+const glass = '/video/glass.png';
 
 const PokerInterface = () => {
     // State to toggle modals for demonstration
     const [showAddFunds, setShowAddFunds] = useState(false);
 
-    // Load existing scripts
+    // Load existing scripts dynamically to ensure they run after React renders
     useEffect(() => {
-        // This is where you might load external scripts if they can't be modules
-        // import('../assets/js/custom.js');
-        // import('../assets/js/app/ui-inline-bundle.js');
+        // Polyfill document.addEventListener to fire DOMContentLoaded immediately if document is ready
+        const originalAddEventListener = document.addEventListener;
+        document.addEventListener = function (type, listener, options) {
+            if (type === 'DOMContentLoaded' && document.readyState !== 'loading') {
+                setTimeout(() => listener(new Event('DOMContentLoaded')), 1);
+            } else {
+                originalAddEventListener.call(document, type, listener, options);
+            }
+        };
+
+        const loadScript = (src) => {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.async = false;
+                script.onload = () => resolve();
+                script.onerror = (e) => reject(e);
+                document.body.appendChild(script);
+            });
+        };
+
+        const initScripts = async () => {
+            try {
+                await loadScript('/js/custom.js');
+                await loadScript('/js/app/ui-inline-bundle.js');
+                // Manually trigger DOMContentLoaded after scripts are loaded just in case
+                document.dispatchEvent(new Event('DOMContentLoaded'));
+            } catch (err) {
+                console.error('Failed to initialize scripts', err);
+            }
+        };
+
+        initScripts();
     }, []);
 
     return (
@@ -45,7 +66,13 @@ const PokerInterface = () => {
             <Header />
 
             {/* Top-left hamburger */}
-            <button aria-label="Open controls" className="menu-btn" id="menuButton" title="Open controls">
+            <button
+                aria-label="Open controls"
+                className="menu-btn"
+                id="menuButton"
+                title="Open controls"
+                onClick={() => document.body.classList.toggle('menu-open')}
+            >
                 <span className="bar"></span>
                 <span className="bar"></span>
                 <span className="bar"></span>
@@ -97,10 +124,10 @@ const PokerInterface = () => {
                 roomData="video/room11.png"
                 tableData={table4} // assuming reuse
                 bgVideoId="backgroundVideo_2"
-                faderId="bgFader_2" // Not in original HTML snippet but likely needed? Wait, original didn't have bgFader for room 2. 
-                // Original Room 2 snippet: 
-                // <div class="bg-stack focus-soft"><video ...></video></div> ... No fader?
-                // Room 3 has fader.
+                // Room 2 HTML provided has no fader and no glass
+                faderId={undefined} // No fader
+                hasGlass={false}
+                hasFocusOverlay={true} // Default HTML has focus-overlay
                 chairsId="chairsLayer_2"
                 containerId="videoContainer_2"
                 zoomId="zoomArea_2"
@@ -108,7 +135,6 @@ const PokerInterface = () => {
                 potImgId="potImg_2"
                 potLayersId="potLayers_2"
                 potTargetId="potTarget_2"
-                hasGlass={false} // Room 2 snippet didn't show glass
             />
 
             <GameRoom
@@ -126,7 +152,8 @@ const PokerInterface = () => {
                 potLayersId="potLayers_3"
                 potTargetId="potTarget_3"
                 hasGlass={true}
-                overlaySrc="../assets/video/1167.png" // Check path
+                overlaySrc="../assets/video/1167.png" // Check path validity
+                hasFocusOverlay={true}
             />
 
             <GameRoom
@@ -144,6 +171,7 @@ const PokerInterface = () => {
                 potLayersId="potLayers_4"
                 potTargetId="potTarget_4"
                 hasGlass={true}
+                hasFocusOverlay={true}
             />
 
             <LobbyMenu />

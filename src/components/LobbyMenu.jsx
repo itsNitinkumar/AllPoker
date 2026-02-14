@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
-import lCity from '../assets/video/l-city.png';
-import lGame from '../assets/video/l-game.png';
-import lSky from '../assets/video/l-sky.png';
-import lBaller from '../assets/video/l-baller.png';
+const lCity = '/video/l-city.png';
+const lGame = '/video/l-game.png';
+const lSky = '/video/l-sky.png';
+const lBaller = '/video/l-baller.png';
 
 const LobbyMenu = ({ onGameSelect }) => {
     const [activeGame, setActiveGame] = useState('tableMedia1');
