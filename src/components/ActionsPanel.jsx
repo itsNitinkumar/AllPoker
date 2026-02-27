@@ -46,9 +46,19 @@ const ActionsPanel = () => {
 
             <div className="fold-btn-main">
                 <ol className="d-flex align-items-center">
+                    <li className="show-cards-wrapper">
+                        {/* <label className="d-flex align-items-center gap-2" style={{ color: '#FFF', cursor: 'pointer', fontWeight: '700' }}>
+                            <input type="checkbox" id="userShowCardsToggle" />
+                            <span>Show Cards</span>
+                        </label> */}
+                    </li>
                     <li><button className="fold-btn">Fold</button></li>
                     <li><button className="call-btn">Call</button></li>
-                    <li><button className="raise-btn time-popup">Raise</button></li>
+                    <li><button className="raise-btn time-popup" onClick={() => {
+                        window.$('.time-main-2').addClass('d-block');
+                        window.$('.buy-hero').addClass('z-up');
+                    }}>Raise</button></li>
+
                 </ol>
             </div>
         </div>

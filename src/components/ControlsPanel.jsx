@@ -97,7 +97,7 @@ const ControlsPanel = () => {
 
                 {/* Script will inject more buttons here */}
 
-                <button id="gameModeBtn" type="button">Game Mode</button>
+                <button id="gameModeBtn" type="button" onClick={() => document.body.classList.toggle('game-mode-active')}>Game Mode</button>
                 <button
                     className="buy-btn"
                     id="buyInBtn"
@@ -110,7 +110,18 @@ const ControlsPanel = () => {
                     Add Funds
                 </button>
 
-                <button className="time-popup" id="timeoutBtn" type="button">Timeout</button>
+                <button
+                    className="time-popup"
+                    id="timeoutBtn"
+                    type="button"
+                    onClick={() => {
+                        window.$('.time-main-2').addClass('d-block');
+                        window.$('.buy-hero').addClass('z-up');
+                    }}
+                >
+                    Timeout
+                </button>
+
                 <button
                     className="exit-popup"
                     id="exitBtn"

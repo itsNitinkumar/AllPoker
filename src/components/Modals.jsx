@@ -49,7 +49,12 @@ export const TimeoutModal = ({ onClose }) => (
                 </div>
                 <div className="buy-btn-main">
                     <div className="d-flex align-items-center justify-content-between buy-bottom">
-                        <button className="buy-watch-btn leave-table">Leave Table</button>
+                        <button className="buy-watch-btn leave-table" onClick={() => {
+                            window.$('.time-main').addClass('d-block');
+                            window.$('.time-main-2').removeClass('d-block');
+                            window.$('.buy-hero').addClass('z-up');
+                        }}>Leave Table</button>
+
                         <button className="buy-play-btn" onClick={onClose}>Keep Playing</button>
                     </div>
                 </div>
