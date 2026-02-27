@@ -59,7 +59,7 @@ const PokerInterface = () => {
     }, []);
 
     return (
-        <div className="poker-interface">
+        <div className="poker-interface buy-hero">
             {/* (A) THIS WILL SHOW ON THE WRONG ORIENTATION */}
             <div id="turn"> Please rotate your device! </div>
 
@@ -71,7 +71,11 @@ const PokerInterface = () => {
                 className="menu-btn"
                 id="menuButton"
                 title="Open controls"
-                onClick={() => document.body.classList.toggle('menu-open')}
+                onClick={() => {
+                    document.body.classList.toggle('menu-open');
+                    // Force a layout recalculation or just ensure it's scrolled to top
+                    window.scrollTo(0, 0);
+                }}
             >
                 <span className="bar"></span>
                 <span className="bar"></span>
@@ -176,10 +180,14 @@ const PokerInterface = () => {
 
             <LobbyMenu />
 
-            {/* Modals */}
-            <AddFundsModal onClose={() => setShowAddFunds(false)} />
-            <TimeoutModal onClose={() => { }} />
-            <ConfirmLeaveModal onClose={() => { }} />
+            {/* Modals - Removed buy-hero wrapper as it was blocking clicks and causing positioning issues */}
+            <AddFundsModal onClose={() => window.$('.enter-buy-main').removeClass('d-block')} />
+            <TimeoutModal onClose={() => window.$('.time-main-2').removeClass('d-block')} />
+            <ConfirmLeaveModal onClose={() => {
+                window.$('.time-main').removeClass('d-block');
+                window.$('.buy-hero').removeClass('z-up');
+            }} />
+
 
             {/* Cards and Actions */}
             <CardsMain />

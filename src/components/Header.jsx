@@ -48,7 +48,10 @@ const Header = () => {
                         <div className="header-main d-flex align-items-center justify-content-between">
                             <div className="left-list">
                                 <ul className="d-flex align-items-center justify-content-center">
-                                    <li><button id="exitBtn">Lobby</button></li>
+                                    <li><button id="exitBtnHeader" className="leave-table" onClick={() => {
+                                        window.$('.time-main').addClass('d-block');
+                                        window.$('.buy-hero').addClass('z-up');
+                                    }}>Lobby</button></li>
                                     <li><button id="buyInBtn">Add Funds</button></li>
                                     <li><button id="proofBtn">Proof</button></li>
                                 </ul>

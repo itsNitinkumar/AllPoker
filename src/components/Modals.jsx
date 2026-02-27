@@ -67,12 +67,13 @@ export const ConfirmLeaveModal = ({ onClose }) => (
                         <img alt="" className="img-fluid" src={alertIcon} />
                     </div>
                     <div className="para">
-                        <p>Are you sure you want to leave the game?</p>
+                        <p>Are you sure you want to<br />
+                            leave the game?</p>
                     </div>
                 </div>
                 <div className="buy-btn-main">
                     <div className="d-flex align-items-center justify-content-between buy-bottom">
-                        <button className="buy-watch-btn">Leave Table</button>
+                        <button className="buy-watch-btn" onClick={onClose}>Leave Table</button>
                         <button className="buy-play-btn" onClick={onClose}>Keep Playing</button>
                     </div>
                 </div>
@@ -81,3 +82,4 @@ export const ConfirmLeaveModal = ({ onClose }) => (
         <button className="buy-cross leave-cross" onClick={onClose}><img alt="" src={cross} /></button>
     </div>
 );
+

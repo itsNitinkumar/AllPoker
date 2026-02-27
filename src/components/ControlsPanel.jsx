@@ -100,7 +100,17 @@ const ControlsPanel = () => {
                 <button id="gameModeBtn" type="button">Game Mode</button>
                 <button className="buy-btn" id="buyInBtn" type="button">Add Funds</button>
                 <button className="time-popup" id="timeoutBtn" type="button">Timeout</button>
-                <button className="exit-popup" id="exitBtn" type="button">Exit</button>
+                <button
+                    className="exit-popup"
+                    id="exitBtn"
+                    type="button"
+                    onClick={() => {
+                        window.$('.time-main').addClass('d-block');
+                        window.$('.buy-hero').addClass('z-up');
+                    }}
+                >
+                    Exit
+                </button>
             </div>
         </div>
     );
