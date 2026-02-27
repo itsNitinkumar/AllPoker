@@ -12,12 +12,12 @@ export const AddFundsModal = ({ onClose }) => (
             <div className="price-list">
                 <ul className="d-flex align-items-center justify-content-center">
                     <li>5000</li>
-                    <li className="price-lst2"><span id="min-price5">$5000</span></li>
+                    <li className="price-lst2"><span id="min-price5">$550</span></li>
                     <li>55K</li>
                 </ul>
                 <div className="d-flex align-items-center price-main">
                     <span>Min</span>
-                    <div id="price-range5"></div> {/* Placeholder for slider */}
+                    <div id="price-range5"></div>
                     <span>Max</span>
                 </div>
                 <div className="buy-btn-main">
@@ -32,6 +32,7 @@ export const AddFundsModal = ({ onClose }) => (
         <button className="buy-cross fund-cross" onClick={onClose}><img alt="" src={cross} /></button>
     </div>
 );
+
 
 export const TimeoutModal = ({ onClose }) => (
     <div className="camera-setting-main time-main-2">

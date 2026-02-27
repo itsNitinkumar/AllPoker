@@ -52,7 +52,11 @@ const Header = () => {
                                         window.$('.time-main').addClass('d-block');
                                         window.$('.buy-hero').addClass('z-up');
                                     }}>Lobby</button></li>
-                                    <li><button id="buyInBtn">Add Funds</button></li>
+                                    <li><button id="buyInBtn" onClick={() => {
+                                        window.$('.enter-buy-main').addClass('d-block');
+                                        window.$('.buy-hero').addClass('z-up');
+                                    }}>Add Funds</button></li>
+
                                     <li><button id="proofBtn">Proof</button></li>
                                 </ul>
                             </div>

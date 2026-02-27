@@ -181,8 +181,16 @@ const PokerInterface = () => {
             <LobbyMenu />
 
             {/* Modals - Removed buy-hero wrapper as it was blocking clicks and causing positioning issues */}
-            <AddFundsModal onClose={() => window.$('.enter-buy-main').removeClass('d-block')} />
-            <TimeoutModal onClose={() => window.$('.time-main-2').removeClass('d-block')} />
+            <AddFundsModal onClose={() => {
+                window.$('.enter-buy-main').removeClass('d-block');
+                window.$('.buy-hero').removeClass('z-up');
+            }} />
+
+            <TimeoutModal onClose={() => {
+                window.$('.time-main-2').removeClass('d-block');
+                window.$('.buy-hero').removeClass('z-up');
+            }} />
+
             <ConfirmLeaveModal onClose={() => {
                 window.$('.time-main').removeClass('d-block');
                 window.$('.buy-hero').removeClass('z-up');
