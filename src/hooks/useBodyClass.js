@@ -33,10 +33,18 @@ const useBodyClass = () => {
     // Hamburger auto-show/hide on mouse movement
     // CSS hides #menuButton by default (opacity:0, pointer-events:none).
     // We show it on mouse move and hide after 2s idle, matching legacy behavior.
+    // In game mode, the hamburger is always hidden (game header provides its own nav).
     useEffect(() => {
         const HIDE_DELAY = 2000;
         const btn = document.getElementById('menuButton');
         if (!btn) return;
+
+        // In game mode, always hide the hamburger — game header has its own controls
+        if (gameModeActive) {
+            btn.style.opacity = '0';
+            btn.style.pointerEvents = 'none';
+            return;
+        }
 
         const showButton = () => {
             btn.style.opacity = '1';
@@ -65,7 +73,7 @@ const useBodyClass = () => {
             window.removeEventListener('mousemove', onMouseMove);
             clearTimeout(hideTimerRef.current);
         };
-    }, [menuOpen]);
+    }, [menuOpen, gameModeActive]);
 
     // Cleanup on unmount
     useEffect(() => {

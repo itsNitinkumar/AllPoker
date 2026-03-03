@@ -33,8 +33,8 @@ const ChatTabs = () => {
     if (!emojiPanelOpen) return null;
 
     return (
-        <div className="emoji-main-inner add-after d-block">
-            <div className="emoji-main">
+        <div className="emoji-main-inner add-after d-block" style={{ position: 'absolute', top: 0, right: 0, zIndex: 10 }}>
+            <div className="emoji-main d-block">
                 <ul className="nav nav-tabs" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
                         <button
@@ -132,7 +132,7 @@ const ChatTabs = () => {
                             </div>
                         </div>
                     </div>
-                    <button className="buy-cross buy-cross4" onClick={() => dispatch(closeEmojiPanel())}><img src={cross} alt="" /></button>
+                    <button className="buy-cross buy-cross4 d-block" onClick={() => dispatch(closeEmojiPanel())}><img src={cross} alt="" /></button>
                 </div>
             </div>
         </div>

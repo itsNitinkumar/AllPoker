@@ -18,7 +18,6 @@ import usePipMirror from './hooks/usePipMirror';
 import Header from './components/Header';
 import LobbyMenu from './components/LobbyMenu';
 import ControlsPanel from './components/ControlsPanel';
-import ChatTabs from './components/ChatTabs';
 import Pot from './components/Pot';
 import ZoomArea from './components/ZoomArea';
 import GameRoom from './components/GameRoom';
@@ -89,19 +88,36 @@ const PokerInterface = () => {
         return () => window.removeEventListener('keydown', onKeyDown);
     }, [dispatch, addFundsOpen, timeoutOpen, confirmLeaveOpen]);
 
-    // Click outside emoji panel closes it
+    // Click outside emoji panel closes it.
+    // We listen on the *capture* phase so the handler sees the original target
+    // before React can reconcile and potentially detach the node.
+    const emojiPanelOpen = useSelector((state) => state.ui.emojiPanelOpen);
+
     useEffect(() => {
-        const onClick = (e) => {
+        if (!emojiPanelOpen) return;           // only attach while panel is open
+
+        const onClickOutside = (e) => {
             const target = e.target;
             // If the click is inside the emoji panel or a trigger button, ignore
             const insidePanel = target.closest('.emoji-main-inner, .emoji-main');
-            const isTrigger = target.closest('.smily, #proofBtn, a.support, .buy-cross4, .hurt');
+            const isTrigger = target.closest(
+                '.smily, #proofBtn, #btnLiveC1, .video-icon, a.support, .buy-cross4, .hurt'
+            );
             if (insidePanel || isTrigger) return;
             dispatch(closeEmojiPanel());
         };
-        document.addEventListener('click', onClick);
-        return () => document.removeEventListener('click', onClick);
-    }, [dispatch]);
+
+        // Delay one frame so the same click that opened the panel
+        // doesn't also trigger the outside-click handler.
+        const raf = requestAnimationFrame(() => {
+            document.addEventListener('click', onClickOutside, true);
+        });
+
+        return () => {
+            cancelAnimationFrame(raf);
+            document.removeEventListener('click', onClickOutside, true);
+        };
+    }, [dispatch, emojiPanelOpen]);
 
     return (
         <div className={`poker-interface buy-hero${anyModalOpen ? ' z-up' : ''}`}>
@@ -246,9 +262,20 @@ const PokerInterface = () => {
 
             {/* Live video feed — toggled via camera icon in game header */}
             {videoPanelOpen && (
-                <div className="react-video d-block opacity-100">
-                    <div className="image-holder react-video-main">
-                        <video autoPlay muted playsInline id="localVideo"></video>
+                <div className="react-video d-block opacity-100" style={{
+                    position: 'fixed',
+                    bottom: '20px',
+                    right: '20px',
+                    width: '200px',
+                    height: '150px',
+                    zIndex: 9997,
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(0,0,0,.5)',
+                    border: '2px solid rgba(255,255,255,.15)',
+                }}>
+                    <div className="image-holder react-video-main" style={{ minHeight: 'auto', width: '100%', height: '100%' }}>
+                        <video autoPlay muted playsInline id="localVideo" style={{ width: '100%', height: '100%', objectFit: 'cover' }}></video>
                     </div>
                 </div>
             )}
@@ -276,8 +303,6 @@ const PokerInterface = () => {
                     </button>
                 </div>
             )}
-
-            <ChatTabs />
 
         </div>
     );

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { openConfirmLeave, openAddFunds, openEmojiPanel, closeEmojiPanel, toggleVideoPanel } from '../store/uiSlice';
+import ChatTabs from './ChatTabs';
 const logo = '/img/logo@2x.png';
 const cameraIcon = '/images/camera.svg';
 const messageIcon = '/images/message.svg';
@@ -43,7 +44,7 @@ const Header = () => {
             </header>
 
             {/* Game Header */}
-            <header aria-label="Game Header" className="landing-header header-top game-header" id="gameHeader">
+            <header aria-label="Game Header" className="landing-header header-top game-header" id="gameHeader" style={{ overflow: 'visible' }}>
                 <div className="logo-wrapper">
                 </div>
 
@@ -81,9 +82,12 @@ const Header = () => {
                                     }}><img src={messageIcon} alt="" className="img-fluid" /></button></li>
                                 </ol>
                             </div>
+
+                            <ChatTabs />
                         </div>
                     </div>
                 </div>
+
             </header>
         </>
     );
