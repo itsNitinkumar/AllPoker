@@ -1,18 +1,27 @@
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setActiveRoom } from '../store/uiSlice';
 const lCity = '/video/l-city.png';
 const lGame = '/video/l-game.png';
 const lSky = '/video/l-sky.png';
 const lBaller = '/video/l-baller.png';
 
-const LobbyMenu = ({ onGameSelect }) => {
-    const [activeGame, setActiveGame] = useState('tableMedia1');
+const ROOM_MAP = {
+    'tableMedia1': 1,
+    'tableMedia2': 2,
+    'tableMedia3': 3,
+    'tableMedia4': 4,
+};
+
+const LobbyMenu = () => {
+    const dispatch = useDispatch();
+    const activeRoom = useSelector((state) => state.ui.activeRoom);
+    const activeGame = 'tableMedia' + activeRoom;
 
     const handleGameSelect = (targetId) => {
-        setActiveGame(targetId);
-        if (onGameSelect) {
-            onGameSelect(targetId);
-        }
+        const roomNum = ROOM_MAP[targetId] || 1;
+        dispatch(setActiveRoom(roomNum));
     };
 
     return (

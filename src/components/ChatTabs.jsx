@@ -1,5 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { closeEmojiPanel } from '../store/uiSlice';
 
 // Icons
 const snd = '/images/snd.svg';
@@ -17,10 +19,21 @@ const gProof = '/images/g-proof.svg';
 const cross = '/images/cross.svg';
 
 const ChatTabs = () => {
+    const dispatch = useDispatch();
+    const { emojiPanelOpen, emojiActiveSource } = useSelector((state) => state.ui);
     const [activeTab, setActiveTab] = useState('chat');
 
+    // When the panel opens via proof/support, switch to that tab
+    useEffect(() => {
+        if (emojiPanelOpen && emojiActiveSource === 'proof') setActiveTab('proof');
+        else if (emojiPanelOpen && emojiActiveSource === 'support') setActiveTab('support');
+        else if (emojiPanelOpen && emojiActiveSource === 'chat') setActiveTab('chat');
+    }, [emojiPanelOpen, emojiActiveSource]);
+
+    if (!emojiPanelOpen) return null;
+
     return (
-        <div className="emoji-main-inner">
+        <div className="emoji-main-inner add-after d-block">
             <div className="emoji-main">
                 <ul className="nav nav-tabs" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
@@ -119,7 +132,7 @@ const ChatTabs = () => {
                             </div>
                         </div>
                     </div>
-                    <button className="buy-cross buy-cross4"><img src={cross} alt="" /></button>
+                    <button className="buy-cross buy-cross4" onClick={() => dispatch(closeEmojiPanel())}><img src={cross} alt="" /></button>
                 </div>
             </div>
         </div>

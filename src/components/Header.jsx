@@ -1,11 +1,15 @@
 
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { openConfirmLeave, openAddFunds, openEmojiPanel, closeEmojiPanel, toggleVideoPanel } from '../store/uiSlice';
 const logo = '/img/logo@2x.png';
 const cameraIcon = '/images/camera.svg';
 const messageIcon = '/images/message.svg';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const dispatch = useDispatch();
+    const { emojiPanelOpen, emojiActiveSource, videoPanelOpen } = useSelector((state) => state.ui);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -49,22 +53,32 @@ const Header = () => {
                             <div className="left-list">
                                 <ul className="d-flex align-items-center justify-content-center">
                                     <li><button id="exitBtnHeader" className="leave-table" onClick={() => {
-                                        window.$('.time-main').addClass('d-block');
-                                        window.$('.buy-hero').addClass('z-up');
+                                        dispatch(openConfirmLeave());
                                     }}>Lobby</button></li>
                                     <li><button id="buyInBtn" onClick={() => {
-                                        window.$('.enter-buy-main').addClass('d-block');
-                                        window.$('.buy-hero').addClass('z-up');
+                                        dispatch(openAddFunds());
                                     }}>Add Funds</button></li>
 
-                                    <li><button id="proofBtn">Proof</button></li>
+                                    <li><button id="proofBtn" className={emojiPanelOpen && emojiActiveSource === 'proof' ? 'icon-bg' : ''} onClick={() => {
+                                        if (emojiPanelOpen && emojiActiveSource === 'proof') {
+                                            dispatch(closeEmojiPanel());
+                                        } else {
+                                            dispatch(openEmojiPanel('proof'));
+                                        }
+                                    }}>Proof</button></li>
                                 </ul>
                             </div>
 
                             <div className="right-list">
                                 <ol className="d-flex align-items-center justify-content-center">
-                                    <li><button id="btnLiveC1" className="video-icon"><img src={cameraIcon} alt="" className="img-fluid" /></button></li>
-                                    <li><button className="smily"><img src={messageIcon} alt="" className="img-fluid" /></button></li>
+                                    <li><button id="btnLiveC1" className={`video-icon${videoPanelOpen ? ' icon-bg' : ''}`} onClick={() => dispatch(toggleVideoPanel())}><img src={cameraIcon} alt="" className="img-fluid" /></button></li>
+                                    <li><button className={`smily${emojiPanelOpen && emojiActiveSource === 'chat' ? ' icon-bg' : ''}`} onClick={() => {
+                                        if (emojiPanelOpen && emojiActiveSource === 'chat') {
+                                            dispatch(closeEmojiPanel());
+                                        } else {
+                                            dispatch(openEmojiPanel('chat'));
+                                        }
+                                    }}><img src={messageIcon} alt="" className="img-fluid" /></button></li>
                                 </ol>
                             </div>
                         </div>

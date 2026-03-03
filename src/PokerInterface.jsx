@@ -1,4 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { closeAddFunds, closeTimeout, closeConfirmLeave, toggleMenu, setMenuOpen, closeEmojiPanel, closeHandRank } from './store/uiSlice';
+import useBodyClass from './hooks/useBodyClass';
+import useOverlays from './hooks/useOverlays';
+import useVideoDrag from './hooks/useVideoDrag';
+import useZoom from './hooks/useZoom';
+import useTimeOfDay from './hooks/useTimeOfDay';
+import useLiveCamera from './hooks/useLiveCamera';
+import useRoomSwitcher from './hooks/useRoomSwitcher';
+import useRoomPotAlign from './hooks/useRoomPotAlign';
+import useRoom3Speed from './hooks/useRoom3Speed';
+import useDeviceCheck from './hooks/useDeviceCheck';
+import useLobbyHoverCard from './hooks/useLobbyHoverCard';
+import usePipMirror from './hooks/usePipMirror';
 
 // Components
 import Header from './components/Header';
@@ -18,48 +32,79 @@ const table4 = '/video/table4.png';
 const glass = '/video/glass.png';
 
 const PokerInterface = () => {
-    // State to toggle modals for demonstration
-    const [showAddFunds, setShowAddFunds] = useState(false);
+    const dispatch = useDispatch();
+    const { addFundsOpen, timeoutOpen, confirmLeaveOpen, videoPanelOpen, handRankOpen, activeRoom } = useSelector((state) => state.ui);
+    const anyModalOpen = addFundsOpen || timeoutOpen || confirmLeaveOpen;
 
-    // Load existing scripts dynamically to ensure they run after React renders
+    // Single hook that syncs all Redux-driven body classes (menu-open, game-mode-active)
+    useBodyClass();
+
+    // ---- Game engine hooks ----
+    // Overlay system: creates/positions .overlay-box elements over character videos
+    useOverlays();
+
+    // Video container drag: pointer-drag to nudge all character videos
+    useVideoDrag();
+
+    // Hold-to-zoom on #zoomArea with character hide + chip/pot fade
+    useZoom();
+
+    // Time-of-day background video cycling
+    useTimeOfDay();
+
+    // Live camera PIP (getUserMedia)
+    useLiveCamera();
+
+    // Room switching (rooms 1–4)
+    useRoomSwitcher(activeRoom);
+
+    // Pot alignment for rooms 2–4
+    useRoomPotAlign(activeRoom);
+
+    // Room 3 playback speed
+    useRoom3Speed();
+
+    // Device size check (rotate/too-small message)
+    useDeviceCheck();
+
+    // Lobby hover cards (preview on lobby button hover)
+    useLobbyHoverCard();
+
+    // PIP mirror (for .live-pip videos)
+    usePipMirror();
+
+    // ESC key closes menu and panels
     useEffect(() => {
-        // Polyfill document.addEventListener to fire DOMContentLoaded immediately if document is ready
-        const originalAddEventListener = document.addEventListener;
-        document.addEventListener = function (type, listener, options) {
-            if (type === 'DOMContentLoaded' && document.readyState !== 'loading') {
-                setTimeout(() => listener(new Event('DOMContentLoaded')), 1);
-            } else {
-                originalAddEventListener.call(document, type, listener, options);
+        const onKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                dispatch(setMenuOpen(false));
+                dispatch(closeEmojiPanel());
+                dispatch(closeHandRank());
+                if (addFundsOpen) dispatch(closeAddFunds());
+                if (timeoutOpen) dispatch(closeTimeout());
+                if (confirmLeaveOpen) dispatch(closeConfirmLeave());
             }
         };
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [dispatch, addFundsOpen, timeoutOpen, confirmLeaveOpen]);
 
-        const loadScript = (src) => {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                script.async = false;
-                script.onload = () => resolve();
-                script.onerror = (e) => reject(e);
-                document.body.appendChild(script);
-            });
+    // Click outside emoji panel closes it
+    useEffect(() => {
+        const onClick = (e) => {
+            const target = e.target;
+            // If the click is inside the emoji panel or a trigger button, ignore
+            const insidePanel = target.closest('.emoji-main-inner, .emoji-main');
+            const isTrigger = target.closest('.smily, #proofBtn, a.support, .buy-cross4, .hurt');
+            if (insidePanel || isTrigger) return;
+            dispatch(closeEmojiPanel());
         };
-
-        const initScripts = async () => {
-            try {
-                await loadScript('/js/custom.js');
-                await loadScript('/js/app/ui-inline-bundle.js');
-                // Manually trigger DOMContentLoaded after scripts are loaded just in case
-                document.dispatchEvent(new Event('DOMContentLoaded'));
-            } catch (err) {
-                console.error('Failed to initialize scripts', err);
-            }
-        };
-
-        initScripts();
-    }, []);
+        document.addEventListener('click', onClick);
+        return () => document.removeEventListener('click', onClick);
+    }, [dispatch]);
 
     return (
-        <div className="poker-interface buy-hero">
+        <div className={`poker-interface buy-hero${anyModalOpen ? ' z-up' : ''}`}>
             {/* (A) THIS WILL SHOW ON THE WRONG ORIENTATION */}
             <div id="turn"> Please rotate your device! </div>
 
@@ -72,8 +117,7 @@ const PokerInterface = () => {
                 id="menuButton"
                 title="Open controls"
                 onClick={() => {
-                    document.body.classList.toggle('menu-open');
-                    // Force a layout recalculation or just ensure it's scrolled to top
+                    dispatch(toggleMenu());
                     window.scrollTo(0, 0);
                 }}
             >
@@ -180,28 +224,58 @@ const PokerInterface = () => {
 
             <LobbyMenu />
 
-            {/* Modals - Removed buy-hero wrapper as it was blocking clicks and causing positioning issues */}
-            <AddFundsModal onClose={() => {
-                window.$('.enter-buy-main').removeClass('d-block');
-                window.$('.buy-hero').removeClass('z-up');
-            }} />
+            {/* Modals — rendered conditionally via Redux state */}
+            {addFundsOpen && (
+                <AddFundsModal onClose={() => dispatch(closeAddFunds())} />
+            )}
 
-            <TimeoutModal onClose={() => {
-                window.$('.time-main-2').removeClass('d-block');
-                window.$('.buy-hero').removeClass('z-up');
-            }} />
+            {timeoutOpen && (
+                <TimeoutModal onClose={() => dispatch(closeTimeout())} />
+            )}
 
-            <ConfirmLeaveModal onClose={() => {
-                window.$('.time-main').removeClass('d-block');
-                window.$('.buy-hero').removeClass('z-up');
-            }} />
+            {confirmLeaveOpen && (
+                <ConfirmLeaveModal onClose={() => dispatch(closeConfirmLeave())} />
+            )}
 
 
             {/* Cards and Actions */}
             <CardsMain />
 
-            {/* Fold/Action Panel. Note HTML IDs duplicate "gameHeader" here. We kept it in component. */}
+            {/* Fold/Action Panel */}
             <ActionsPanel />
+
+            {/* Live video feed — toggled via camera icon in game header */}
+            {videoPanelOpen && (
+                <div className="react-video d-block opacity-100">
+                    <div className="image-holder react-video-main">
+                        <video autoPlay muted playsInline id="localVideo"></video>
+                    </div>
+                </div>
+            )}
+
+            {/* Hand Rank Reference — toggled via ? button in CardsMain */}
+            {handRankOpen && (
+                <div className="hand-rank d-block">
+                    <div className="hand-rank-inner">
+                        <h4>Hand Rankings</h4>
+                        <ol>
+                            <li>Royal Flush</li>
+                            <li>Straight Flush</li>
+                            <li>Four of a Kind</li>
+                            <li>Full House</li>
+                            <li>Flush</li>
+                            <li>Straight</li>
+                            <li>Three of a Kind</li>
+                            <li>Two Pair</li>
+                            <li>One Pair</li>
+                            <li>High Card</li>
+                        </ol>
+                    </div>
+                    <button className="buy-cross" onClick={() => dispatch(closeHandRank())}>
+                        <img alt="Close" src="/images/cross.svg" />
+                    </button>
+                </div>
+            )}
 
             <ChatTabs />
 
