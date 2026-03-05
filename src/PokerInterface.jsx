@@ -13,6 +13,7 @@ import useRoom3Speed from './hooks/useRoom3Speed';
 import useDeviceCheck from './hooks/useDeviceCheck';
 import useLobbyHoverCard from './hooks/useLobbyHoverCard';
 import usePipMirror from './hooks/usePipMirror';
+import useGameConnection from './hooks/useGameConnection';
 
 // Components
 import Header from './components/Header';
@@ -71,6 +72,9 @@ const PokerInterface = () => {
 
     // PIP mirror (for .live-pip videos)
     usePipMirror();
+
+    // Game connection lifecycle (profile, find game, join socket room)
+    useGameConnection();
 
     // ESC key closes menu and panels
     useEffect(() => {

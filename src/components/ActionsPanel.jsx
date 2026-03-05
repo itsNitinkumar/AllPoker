@@ -2,10 +2,20 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { openTimeout } from '../store/uiSlice';
+import {
+    pokerFoldSend,
+    pokerCallSend,
+    pokerCheckSend,
+    pokerAllInSend,
+} from '../services/socket';
 
 const ActionsPanel = () => {
     const dispatch = useDispatch();
     const actionButtonsHidden = useSelector((state) => state.ui.actionButtonsHidden);
+    const user = useSelector((state) => state.auth.user);
+    const gameDetails = useSelector((state) => state.game.gameDetails);
+    const currentGame = useSelector((state) => state.game.currentGame);
+
     // Slider state — actual dollar amounts matching legacy config
     const [raiseAmount, setRaiseAmount] = useState(2550);   // price-range2: 0–7550
     const [betAmount, setBetAmount] = useState(550);         // price-range3: 0–2000
@@ -68,8 +78,20 @@ const ActionsPanel = () => {
                 <ol className="d-flex align-items-center">
                     <li className="show-cards-wrapper">
                     </li>
-                    <li><button className="fold-btn">Fold</button></li>
-                    <li><button className="call-btn">Call</button></li>
+                    <li><button className="fold-btn" onClick={() => {
+                        if (currentGame && user) {
+                            pokerFoldSend({ gameId: currentGame.id, userId: user.id });
+                        }
+                    }}>Fold</button></li>
+                    <li><button className="call-btn" onClick={() => {
+                        if (currentGame && user && gameDetails) {
+                            pokerCallSend({
+                                gameId: currentGame.id,
+                                userId: user.id,
+                                amount: gameDetails.currentBet || 0,
+                            });
+                        }
+                    }}>Call</button></li>
                     <li><button className="raise-btn time-popup" onClick={() => {
                         dispatch(openTimeout());
                     }}>Raise</button></li>

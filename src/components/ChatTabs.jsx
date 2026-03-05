@@ -1,7 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { closeEmojiPanel } from '../store/uiSlice';
+import { sendChatMessage } from '../services/socket';
 
 // Icons
 const snd = '/images/snd.svg';
@@ -21,7 +22,12 @@ const cross = '/images/cross.svg';
 const ChatTabs = () => {
     const dispatch = useDispatch();
     const { emojiPanelOpen, emojiActiveSource } = useSelector((state) => state.ui);
+    const user = useSelector((state) => state.auth.user);
+    const currentGame = useSelector((state) => state.game.currentGame);
+    const chatMessages = useSelector((state) => state.game.chatMessages);
     const [activeTab, setActiveTab] = useState('chat');
+    const [chatInput, setChatInput] = useState('');
+    const chatEndRef = useRef(null);
 
     // When the panel opens via proof/support, switch to that tab
     useEffect(() => {
@@ -89,13 +95,45 @@ const ChatTabs = () => {
                     <div className={`tab-pane fade ${activeTab === 'chat' ? 'show active' : ''}`} id="home-tab-pane" role="tabpanel">
                         <div className="chat-main">
                             <ul>
-                                <li>Lorem Ipsum Dolor Sit Amet.</li>
-                                <li className="dealer-msg">Dealer: Lorem Ipsum Dolor Sit Amet.</li>
-                                <li>Lorem Ipsum Dolor Sit Amet.</li>
+                                {chatMessages.length === 0 && (
+                                    <li style={{ opacity: 0.5 }}>No messages yet</li>
+                                )}
+                                {chatMessages.map((msg, i) => (
+                                    <li key={msg.id || i} className={msg.user_id === 0 ? 'dealer-msg' : ''}>
+                                        {msg.name ? `${msg.name}: ` : ''}{msg.message}
+                                    </li>
+                                ))}
+                                <div ref={chatEndRef} />
                             </ul>
                             <div className="chat-input">
-                                <input type="text" placeholder="Input text" />
-                                <button><img src={snd} alt="" className="img-fluid" /></button>
+                                <input
+                                    type="text"
+                                    placeholder="Input text"
+                                    value={chatInput}
+                                    onChange={(e) => setChatInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && chatInput.trim() && currentGame && user) {
+                                            sendChatMessage({
+                                                gameId: currentGame.id,
+                                                userId: user.id,
+                                                message: chatInput.trim(),
+                                                name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+                                            });
+                                            setChatInput('');
+                                        }
+                                    }}
+                                />
+                                <button onClick={() => {
+                                    if (chatInput.trim() && currentGame && user) {
+                                        sendChatMessage({
+                                            gameId: currentGame.id,
+                                            userId: user.id,
+                                            message: chatInput.trim(),
+                                            name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+                                        });
+                                        setChatInput('');
+                                    }
+                                }}><img src={snd} alt="" className="img-fluid" /></button>
                             </div>
                         </div>
                     </div>
